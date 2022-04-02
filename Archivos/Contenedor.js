@@ -1,12 +1,14 @@
 const fs = require('fs');
+const { arch } = require('os');
 
 async function leerProductos() {
     try {
-        const contenido = await fs.promises.readFile('./Archivos/productos.txt', 'utf-8');
-        console.log(contenido);
+        const contenido = await fs.promises.readFile('./productos.txt', 'utf-8');
+        let final = JSON.parse(contenido);
+        return final;
     }
     catch(err){
-        console.log(`Hubo un error ${err}`)
+        return ('Hay un error', err);
     }
 };
 
@@ -17,38 +19,56 @@ class Contenedor {
         this.file = file;
     };
 
-    save(object) {
-        let id = fs.length;
-        let newId = id + 1;
-        let newObject = object.add(id = newId)
-        fs.appendFile('./Archivos/productos.txt', newObject, error => {
-            if (error) {
-                console.log("No se pudo agregar el objeto al archivo");
+    async save(objeto) {
+        try {
+            let archivos = await leerProductos();
+            let id = archivos[archivos.length-1].id;
+            if (id = 0) {
+                id = 1;
             }else{
-                console.log("Guardado!")
-            }
-        }); 
-    };
+                id =+ 1;
+            };
+            objeto.id = id;
+            archivos.push(objeto);
+                await fs.promises.writeFile(this.file, archivos);
+                return archivos.id;
+        }catch(err){
+            return ('Hubo un error', err)
+        };
+};
     
+    // async getByID(number) {
+    //     try {
+    //         let archivos = await leerProductos();
+    //         let id = archivos[archivos.length-1].id;
+            
+    //     }
+    // }
 
-    getAll() {
-        return leerProductos();
-    };
+    // async getAll() {
+    //     let archivos = await leerProductos ();
 
-    deleteByID(number) {
-        let array = leerProductos();
-        array = array.filter(object => object.id != number);
-        return array;
-    };
+    // };
 
-    deleteAll() {
-        let array = leerProductos();
-        let id = array.length;
-        let newId = id + 1;
-        array = array.filter(object => object.id != newId);
-        return array;
-    };
+    // deleteByID(number) {
+    //     let array = leerProductos();
+    //     array = array.filter(object => object.id != number);
+    //     return array;
+    // };
+
+    // deleteAll() {
+    //     let array = leerProductos();
+    //     let id = array.length;
+    //     let newId = id + 1;
+    //     array = array.filter(object => object.id != newId);
+    //     return array;
+    // };
 };
 
-Contenedor.deleteAll();
-leerProductos()
+const nuevoObj = new Contenedor('./productos.txt');
+
+console.log(nuevoObj.save({                                                                                                                                           
+    title: 'Regla',                                                                                                                                 
+    price: 13.45,                                                                                                                                     
+    thumbnail: 'https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png',                                                                                                                                                                                  
+    }));
