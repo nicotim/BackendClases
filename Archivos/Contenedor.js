@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { arch } = require('os');
 
 async function leerProductos() {
     try {
@@ -13,6 +12,7 @@ async function leerProductos() {
 };
 
 
+
 class Contenedor {
 
     constructor(file) {
@@ -23,27 +23,36 @@ class Contenedor {
         try {
             let archivos = await leerProductos();
             let id = archivos[archivos.length-1].id;
-            if (id = 0) {
+            if (id == 0) {
                 id = 1;
             }else{
-                id =+ 1;
+                id += 1;
             };
             objeto.id = id;
             archivos.push(objeto);
-                await fs.promises.writeFile(this.file, archivos);
-                return archivos.id;
+            await fs.promises.writeFile(this.file, JSON.stringify(archivos));
+                return objeto.id;
         }catch(err){
             return ('Hubo un error', err)
         };
 };
     
-    // async getByID(number) {
-    //     try {
-    //         let archivos = await leerProductos();
-    //         let id = archivos[archivos.length-1].id;
-            
-    //     }
-    // }
+    async getByID(number) {
+        try {
+            let archivos = await leerProductos();
+            let id = archivos[archivos.length-1].id;
+            for (id in archivos) {
+                if (number == id) {
+                    let requestedObject = archivos.find(x => x.id = number)
+                    return requestedObject;
+                }else{
+                    return null;
+                };
+            };
+        }catch(err){
+            return ('Hubo un error', err)
+        };
+    };
 
     // async getAll() {
     //     let archivos = await leerProductos ();
@@ -68,7 +77,7 @@ class Contenedor {
 const nuevoObj = new Contenedor('./productos.txt');
 
 console.log(nuevoObj.save({                                                                                                                                           
-    title: 'Regla',                                                                                                                                 
+    title: "Regla",                                                                                                                                 
     price: 13.45,                                                                                                                                     
-    thumbnail: 'https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png',                                                                                                                                                                                  
-    }));
+    thumbnail: "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",                                                                                                                                                                                  
+}));
