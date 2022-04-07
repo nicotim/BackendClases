@@ -39,12 +39,13 @@ class Contenedor {
     async getByID(number) {
         try {
             let archivos = await leerProductos();
-            let id = archivos[archivos.length-1].id;
-            if ( 0 <= number <= id) {
-                let requestedObject = JSON.parse(archivos.find(x => x.id == number));
+            let lastId = archivos[archivos.length-1].id;
+            if (0 < number <= lastId) {
+                let requestedObject = archivos.find(x => x.id == number);
+                console.log(requestedObject)
                 return requestedObject;
             }else{
-                return null;
+                return "No se encontro el objeto";
             };
         }catch(err){
             return ('Hubo un error', err)
@@ -64,12 +65,13 @@ class Contenedor {
     async deleteByID(number) {
         try {
             let archivos = await leerProductos();
-            let id = archivos[archivos.length-1].id;
-            if ( number == id) {
-                let requestedObjects = JSON.parse(archivos.filter(item => item.id !== number));
-                return requestedObjects;
+            if (0 < number <= archivos.length) {
+                let newFile = archivos.filter(x => x.id !== number);
+                console.log(newFile)
+                await fs.promises.writeFile(this.file, JSON.stringify(newFile));
+                return archivos;
             }else{
-                return null;
+                return "No existe un objeto con ese id";
             };
         }catch(err){
             return ('Hubo un error', err)
@@ -79,9 +81,8 @@ class Contenedor {
     async deleteAll() {
         try {
             let archivos = await leerProductos();
-            await fs.promises.writeFile(this.file, []);
-            archivos.push([]);
-                return archivos;
+            await fs.promises.writeFile(this.file, JSON.stringify([]));
+            return archivos;
         }catch(err){
             return ('Hubo un error', err)
         };
