@@ -6,14 +6,16 @@ const PORT = '8080'
 const nuevoObj = new Contenedor('./productos.txt');
 
 
-app.get('/productos', (req, res) => {
-    res.send({productos: `${nuevoObj.getAll()}`})
+app.get('/productos', async (req, res) => {
+    let productos = await nuevoObj.getAll();
+    res.send({productos})
 })
 
 const rndInt = Math.floor(Math.random() * 3) + 1
 
-app.get('/productoRandom', (req, res) => {
-    res.send({producto: `${nuevoObj.getByID(rndInt)}`})
+app.get('/productoRandom', async (req, res) => {
+    let productoRandom = await nuevoObj.getByID(rndInt);
+    res.send({productoRandom})
 })
 
 const server = app.listen(PORT, () => {
